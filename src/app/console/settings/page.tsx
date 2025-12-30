@@ -17,7 +17,7 @@ export default function SettingsPage() {
   const [copied, setCopied] = useState(false)
 
   const handleCopyApiKey = () => {
-    navigator.clipboard.writeText(settings.integrations.datadog.apiKey)
+    navigator.clipboard.writeText('demo-api-key-hidden-for-security')
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -101,17 +101,17 @@ export default function SettingsPage() {
                   <Input value={user.email} readOnly />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Organization</label>
-                  <Input value={user.organization} readOnly />
+                  <label className="text-sm font-medium mb-2 block">Team</label>
+                  <Input value={user.team} readOnly />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium mb-2 block">Member Since</label>
-                    <Input value={new Date(user.joinedAt).toLocaleDateString()} readOnly />
+                    <Input value={new Date(user.joined_at).toLocaleDateString()} readOnly />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Last Login</label>
-                    <Input value={new Date(user.lastLogin).toLocaleString()} readOnly />
+                    <Input value={new Date(user.last_login).toLocaleString()} readOnly />
                   </div>
                 </div>
                 <div className="pt-2">
@@ -207,11 +207,11 @@ export default function SettingsPage() {
                     <p className="text-sm text-gray-600">Notifications when brownout modes activate</p>
                   </div>
                   <Button 
-                    variant={settings.notifications.brownouts ? "default" : "outline"} 
+                    variant={settings.notifications.brownout_activations ? "default" : "outline"} 
                     size="sm"
-                    onClick={() => toggleNotification('brownouts')}
+                    onClick={() => toggleNotification('brownout_activations')}
                   >
-                    {settings.notifications.brownouts ? 'Enabled' : 'Disabled'}
+                    {settings.notifications.brownout_activations ? 'Enabled' : 'Disabled'}
                   </Button>
                 </div>
 
@@ -221,11 +221,11 @@ export default function SettingsPage() {
                     <p className="text-sm text-gray-600">Alerts when token costs exceed thresholds</p>
                   </div>
                   <Button 
-                    variant={settings.notifications.costAlerts ? "default" : "outline"} 
+                    variant={settings.notifications.cost_alerts ? "default" : "outline"} 
                     size="sm"
-                    onClick={() => toggleNotification('costAlerts')}
+                    onClick={() => toggleNotification('cost_alerts')}
                   >
-                    {settings.notifications.costAlerts ? 'Enabled' : 'Disabled'}
+                    {settings.notifications.cost_alerts ? 'Enabled' : 'Disabled'}
                   </Button>
                 </div>
 
@@ -268,7 +268,7 @@ export default function SettingsPage() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <Input 
-                      value={showApiKey ? settings.integrations.datadog.apiKey : '••••••••••••••••••••••••••••••••'}
+                      value={showApiKey ? 'dd_api_key_demo_hidden_for_security' : '••••••••••••••••••••••••••••••••'}
                       readOnly 
                       className="font-mono text-sm"
                     />
@@ -288,33 +288,7 @@ export default function SettingsPage() {
                     </Button>
                   </div>
                   <div className="mt-2 text-xs text-gray-500">
-                    Site: {settings.integrations.datadog.site}
-                  </div>
-                </div>
-
-                <div className="p-4 border rounded-lg">
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <h3 className="font-medium">Gemini API Integration</h3>
-                      <p className="text-sm text-gray-600">LLM model configuration</p>
-                    </div>
-                    <Badge className="bg-green-100 text-green-800">Configured</Badge>
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Model:</span>
-                      <span>{settings.integrations.gemini.model}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Max Tokens:</span>
-                      <span>{settings.integrations.gemini.maxTokens}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Status:</span>
-                      <Badge variant="outline" className="bg-green-50 text-green-700">
-                        {settings.integrations.gemini.enabled ? 'Enabled' : 'Disabled'}
-                      </Badge>
-                    </div>
+                    Last sync: {new Date(settings.integrations.datadog.last_sync).toLocaleString()}
                   </div>
                 </div>
 
@@ -323,11 +297,15 @@ export default function SettingsPage() {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="text-gray-600">Datadog:</span>
-                      <Badge className="ml-2 bg-green-100 text-green-800">Connected</Badge>
+                      <Badge className="ml-2 bg-green-100 text-green-800">
+                        {settings.integrations.datadog.enabled ? 'Connected' : 'Disconnected'}
+                      </Badge>
                     </div>
                     <div>
-                      <span className="text-gray-600">Gemini:</span>
-                      <Badge className="ml-2 bg-green-100 text-green-800">Active</Badge>
+                      <span className="text-gray-600">Slack:</span>
+                      <Badge className="ml-2 bg-gray-100 text-gray-800">
+                        {settings.integrations.slack.enabled ? 'Connected' : 'Not configured'}
+                      </Badge>
                     </div>
                   </div>
                 </div>

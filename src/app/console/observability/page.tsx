@@ -50,13 +50,13 @@ export default function ObservabilityPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Services</CardTitle>
+            <CardTitle className="text-sm font-medium">Traces</CardTitle>
             <Server className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{data.services.length}</div>
+            <div className="text-2xl font-bold">{data.traces.length}</div>
             <p className="text-xs text-muted-foreground">
-              {data.services.filter(s => s.status === 'healthy').length} healthy
+              {data.traces.filter(t => t.status === 'success').length} successful
             </p>
           </CardContent>
         </Card>
@@ -68,9 +68,9 @@ export default function ObservabilityPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {Math.round(data.services.reduce((sum, s) => sum + s.avgLatency, 0) / data.services.length)}ms
+              {Math.round(data.traces.reduce((sum, t) => sum + t.duration, 0) / data.traces.length)}ms
             </div>
-            <p className="text-xs text-muted-foreground">Across all services</p>
+            <p className="text-xs text-muted-foreground">Across all traces</p>
           </CardContent>
         </Card>
 
@@ -81,9 +81,9 @@ export default function ObservabilityPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {data.services.reduce((sum, s) => sum + s.requests, 0).toLocaleString()}
+              {data.traces.length.toLocaleString()}
             </div>
-            <p className="text-xs text-muted-foreground">Last 24 hours</p>
+            <p className="text-xs text-muted-foreground">Total traces</p>
           </CardContent>
         </Card>
 
@@ -94,8 +94,7 @@ export default function ObservabilityPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {((data.services.reduce((sum, s) => sum + s.errors, 0) / 
-                 data.services.reduce((sum, s) => sum + s.requests, 0)) * 100).toFixed(2)}%
+              {((data.traces.filter(t => t.status === 'error').length / data.traces.length) * 100).toFixed(2)}%
             </div>
             <p className="text-xs text-muted-foreground">Overall error rate</p>
           </CardContent>
@@ -105,25 +104,24 @@ export default function ObservabilityPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <Card>
           <CardHeader>
-            <CardTitle>Services Overview</CardTitle>
-            <CardDescription>Status and performance of all services</CardDescription>
+            <CardTitle>Metrics Overview</CardTitle>
+            <CardDescription>Key system metrics and performance indicators</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {data.services.map((service) => (
-                <div key={service.name} className="flex items-center justify-between p-3 border rounded-lg">
+              {Object.entries(data.metrics).map(([key, metric]) => (
+                <div key={key} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className="flex items-center space-x-2">
-                      <Database className="h-4 w-4 text-gray-500" />
-                      <span className="font-medium">{service.name}</span>
+                      <Activity className="h-4 w-4 text-gray-500" />
+                      <span className="font-medium">{key}</span>
                     </div>
-                    <Badge className={getStatusBadge(service.status)}>
-                      {service.status}
+                    <Badge className="bg-blue-100 text-blue-800">
+                      {metric.trend}
                     </Badge>
                   </div>
                   <div className="text-right text-sm text-gray-600">
-                    <div>{service.avgLatency}ms avg</div>
-                    <div>{service.uptime}% uptime</div>
+                    <div>{metric.current}</div>
                   </div>
                 </div>
               ))}
@@ -142,7 +140,7 @@ export default function ObservabilityPage() {
                 <div key={trace.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
                     <div className="font-medium text-sm">{trace.operation}</div>
-                    <div className="text-xs text-gray-500">{trace.service}</div>
+                    <div className="text-xs text-gray-500">{trace.services.join(', ')}</div>
                   </div>
                   <div className="text-right text-sm">
                     <div className={trace.status === 'success' ? 'text-green-600' : 'text-red-600'}>

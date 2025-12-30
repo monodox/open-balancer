@@ -46,7 +46,7 @@ export default function IncidentsPage() {
   const inProgress = incidents.filter(i => i.status === 'investigating').length
   const resolvedToday = incidents.filter(i => {
     const today = new Date().toDateString()
-    return i.resolvedAt && new Date(i.resolvedAt).toDateString() === today
+    return i.resolved_at && new Date(i.resolved_at).toDateString() === today
   }).length
   return (
     <div className="p-6">
@@ -151,18 +151,15 @@ export default function IncidentsPage() {
                         <Badge className={getSeverityColor(incident.severity)}>
                           {incident.severity}
                         </Badge>
-                        <Badge className={getBrownoutColor(incident.brownoutMode)}>
-                          {incident.brownoutMode} mode
-                        </Badge>
                       </div>
                       <p className="text-sm text-gray-600 mb-3">{incident.description}</p>
                       <div className="flex items-center space-x-4 text-xs text-gray-500">
                         <span>ID: {incident.id}</span>
-                        <span>Created: {new Date(incident.createdAt).toLocaleString()}</span>
-                        {incident.resolvedAt && (
-                          <span>Resolved: {new Date(incident.resolvedAt).toLocaleString()}</span>
+                        <span>Created: {new Date(incident.created_at).toLocaleString()}</span>
+                        {incident.resolved_at && (
+                          <span>Resolved: {new Date(incident.resolved_at).toLocaleString()}</span>
                         )}
-                        <span>Services: {incident.affectedServices.join(', ')}</span>
+                        <span>Assignee: {incident.assignee}</span>
                       </div>
                     </div>
                     <div className="text-right">
@@ -170,7 +167,7 @@ export default function IncidentsPage() {
                         {incident.status}
                       </Badge>
                       <div className="text-xs text-gray-500">
-                        {incident.metrics.duration}min duration
+                        Duration: {incident.impact.duration_minutes}min
                       </div>
                     </div>
                   </div>

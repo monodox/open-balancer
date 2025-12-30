@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Bot, Send, Minimize2, Maximize2, X, Sparkles, Clock, Zap, DollarSign } from 'lucide-react'
-import { AIAgent, type AIAgentResponse } from '@/lib/ai-agent'
+import { AIAgent } from '@/lib/ai-agent'
 
 interface AIAssistantProps {
   context?: string
@@ -21,7 +21,12 @@ interface ChatMessage {
   type: 'user' | 'assistant'
   content: string
   timestamp: string
-  metadata?: AIAgentResponse
+  metadata?: {
+    brownoutMode: string
+    latency: number
+    tokensUsed: number
+    cost: number
+  }
 }
 
 export function AIAssistant({ 
@@ -62,14 +67,19 @@ export function AIAssistant({
     setIsLoading(true)
 
     try {
-      const response = await aiAgent.chat(input.trim(), context)
+      const response = await aiAgent.generateResponse(input.trim())
       
       const assistantMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         type: 'assistant',
-        content: response.content,
-        timestamp: response.timestamp,
-        metadata: response
+        content: response,
+        timestamp: new Date().toISOString(),
+        metadata: {
+          brownoutMode: 'normal',
+          latency: 800 + Math.random() * 400,
+          tokensUsed: 50 + Math.random() * 100,
+          cost: 0.001 + Math.random() * 0.002
+        }
       }
 
       setMessages(prev => [...prev, assistantMessage])
@@ -256,9 +266,9 @@ export function AIAssistant({
                 </Button>
               </div>
               
-              {aiAgent.getStatus().isDemo && (
+              {aiAgent && (
                 <p className="text-xs text-gray-500 mt-2 text-center">
-                  Demo mode - Add GEMINI_API_KEY for real AI responses
+                  Demo mode - responses are simulated
                 </p>
               )}
             </div>
