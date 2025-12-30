@@ -5,9 +5,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { AlertCircle, Plus, Filter, Clock, CheckCircle, AlertTriangle, XCircle } from 'lucide-react'
-import { mockIncidents } from '@/lib/mock-data'
-import { AIAssistant } from '@/components/console/ai-assistant'
-import { incidentAgent } from '@/lib/ai-agent'
+
+// Mock data inline
+const mockIncidents = [
+  {
+    id: 'INC-2024-001',
+    title: 'High P95 Latency Spike',
+    description: 'Sudden increase in response times affecting user experience',
+    status: 'resolved',
+    severity: 'high',
+    priority: 'P1',
+    created_at: '2024-01-15T14:30:00Z',
+    updated_at: '2024-01-15T15:45:00Z',
+    resolved_at: '2024-01-15T15:45:00Z',
+    assignee: 'SRE Team',
+    tags: ['latency', 'performance', 'brownout'],
+    impact: {
+      affected_users: 1200,
+      revenue_impact: '$2,400',
+      duration_minutes: 75
+    }
+  }
+]
 
 export default function IncidentsPage() {
   const [incidents] = useState(mockIncidents)
@@ -215,13 +234,6 @@ export default function IncidentsPage() {
           </CardContent>
         </Card>
       </div>
-
-      <AIAssistant 
-        context="incidents"
-        agent={incidentAgent}
-        title="Incident Analysis Assistant"
-        placeholder="Ask me to analyze incidents or explain brownout responses..."
-      />
     </div>
   )
 }

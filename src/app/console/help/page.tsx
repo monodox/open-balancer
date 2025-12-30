@@ -6,9 +6,21 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { BookOpen, MessageCircle, Search, ExternalLink, HelpCircle, Clock, Tag } from 'lucide-react'
-import { mockHelpArticles } from '@/lib/mock-data'
-import { AIAssistant } from '@/components/console/ai-assistant'
-import { helpAgent } from '@/lib/ai-agent'
+
+// Mock data inline
+const mockHelpArticles = [
+  {
+    id: 'help-001',
+    title: 'Getting Started with Brownout Strategies',
+    content: 'Brownout is a proactive system reliability technique...',
+    category: 'concepts',
+    tags: ['brownout', 'reliability', 'basics'],
+    created_at: '2024-01-10T10:00:00Z',
+    updated_at: '2024-01-15T14:30:00Z',
+    views: 1250,
+    helpful_votes: 45
+  }
+]
 
 export default function HelpPage() {
   const [articles] = useState(mockHelpArticles)
@@ -202,13 +214,6 @@ export default function HelpPage() {
           </div>
         </CardContent>
       </Card>
-
-      <AIAssistant 
-        context="help"
-        agent={helpAgent}
-        title="Help Assistant"
-        placeholder="Ask me about setup, configuration, troubleshooting, or best practices..."
-      />
     </div>
   )
 }
