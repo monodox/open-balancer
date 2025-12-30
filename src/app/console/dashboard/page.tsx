@@ -1,3 +1,5 @@
+'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart3, Users, Shield, Activity } from 'lucide-react'
 import { useBrownout, useMetrics } from '@/hooks/use-brownout'
@@ -79,7 +81,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {latestMetrics ? `$${latestMetrics.token_cost_per_hour}/hr` : '-'}
+              {latestMetrics ? `$${latestMetrics.token_cost_per_hour.toFixed(2)}/hr` : '-'}
             </div>
             <p className="text-xs text-muted-foreground">Hourly token cost</p>
           </CardContent>

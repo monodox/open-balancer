@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { type BrownoutMode } from '@/lib/brownout'
+import { cache } from '@/lib/cache'
 
 interface BrownoutStatus {
   current_mode: BrownoutMode
@@ -38,6 +39,26 @@ export function useBrownout() {
       setLoading(true)
       setError(null)
       
+      // Try to get from cache first
+      const cachedStatus = cache.get<BrownoutStatus>('brownout_status')
+      if (cachedStatus) {
+        setStatus(cachedStatus)
+        setLoading(false)
+        
+        // Still fetch fresh data in background
+        fetch('/api/brownout')
+          .then(res => res.json())
+          .then(data => {
+            setStatus(data)
+            cache.set('brownout_status', data, 2 * 60 * 1000) // Cache for 2 minutes
+          })
+          .catch(() => {
+            // Keep cached data if background fetch fails
+          })
+        
+        return
+      }
+      
       const response = await fetch('/api/brownout')
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)
@@ -45,6 +66,10 @@ export function useBrownout() {
       
       const data = await response.json()
       setStatus(data)
+      
+      // Cache the result
+      cache.set('brownout_status', data, 2 * 60 * 1000) // Cache for 2 minutes
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch brownout status')
       console.error('Error fetching brownout status:', err)
@@ -142,6 +167,29 @@ export function useMetrics(range: string = '1h', interval: string = '1m') {
       setLoading(true)
       setError(null)
       
+      const cacheKey = `metrics_${range}_${interval}`
+      
+      // Try to get from cache first
+      const cachedMetrics = cache.get<MetricsData>(cacheKey)
+      if (cachedMetrics) {
+        setData(cachedMetrics)
+        setLoading(false)
+        
+        // Still fetch fresh data in background for real-time updates
+        const params = new URLSearchParams({ range, interval })
+        fetch(`/api/metrics?${params}`)
+          .then(res => res.json())
+          .then(metricsData => {
+            setData(metricsData)
+            cache.set(cacheKey, metricsData, 30 * 1000) // Cache for 30 seconds
+          })
+          .catch(() => {
+            // Keep cached data if background fetch fails
+          })
+        
+        return
+      }
+      
       const params = new URLSearchParams({ range, interval })
       const response = await fetch(`/api/metrics?${params}`)
       
@@ -151,6 +199,10 @@ export function useMetrics(range: string = '1h', interval: string = '1m') {
       
       const metricsData = await response.json()
       setData(metricsData)
+      
+      // Cache the result
+      cache.set(cacheKey, metricsData, 30 * 1000) // Cache for 30 seconds
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch metrics')
       console.error('Error fetching metrics:', err)

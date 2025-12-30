@@ -1,21 +1,47 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { login, isAuthenticated } from '@/lib/auth'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('test@example.com')
+  const [password, setPassword] = useState('password')
+  const [rememberMe, setRememberMe] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Check if already logged in
+    if (isAuthenticated()) {
+      router.push('/console/dashboard')
+    }
+  }, [router])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle login logic here
-    console.log('Login attempt:', { email, password })
+    setLoading(true)
+    setError('')
+    
+    // Simulate login process
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // Check credentials
+    if (email === 'test@example.com' && password === 'password') {
+      login(email, rememberMe)
+      router.push('/console/dashboard')
+    } else {
+      setError('Invalid credentials. Use test@example.com / password')
+    }
+    
+    setLoading(false)
   }
 
   return (
@@ -29,6 +55,12 @@ export default function LoginPage() {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            {error && (
+              <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-md">
+                <AlertCircle className="h-4 w-4" />
+                <span className="text-sm">{error}</span>
+              </div>
+            )}
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
@@ -75,10 +107,12 @@ export default function LoginPage() {
                 <input
                   id="remember"
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 rounded border-gray-300"
                 />
                 <label htmlFor="remember" className="text-sm text-gray-600">
-                  Remember me
+                  Remember me for 30 days
                 </label>
               </div>
               <Link
@@ -90,8 +124,8 @@ export default function LoginPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full">
-              Sign in
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Signing in...' : 'Sign in'}
             </Button>
             <p className="text-center text-sm text-gray-600">
               Don't have an account?{' '}

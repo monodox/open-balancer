@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { logout, getUserEmail } from '@/lib/auth'
 import { 
   Bell, 
   Search, 
@@ -19,6 +20,11 @@ interface ConsoleHeaderProps {
 
 export function ConsoleHeader({ onMenuClick }: ConsoleHeaderProps) {
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const userEmail = getUserEmail()
+
+  const handleLogout = () => {
+    logout()
+  }
 
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-3">
@@ -76,11 +82,16 @@ export function ConsoleHeader({ onMenuClick }: ConsoleHeaderProps) {
               <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                 <User className="h-4 w-4 text-white" />
               </div>
-              <span className="hidden sm:block text-sm font-medium">Admin</span>
+              <span className="hidden sm:block text-sm font-medium">
+                {userEmail ? userEmail.split('@')[0] : 'Admin'}
+              </span>
             </Button>
 
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
+                <div className="px-4 py-2 text-xs text-gray-500 border-b">
+                  {userEmail || 'test@example.com'}
+                </div>
                 <a
                   href="#"
                   className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -89,20 +100,20 @@ export function ConsoleHeader({ onMenuClick }: ConsoleHeaderProps) {
                   Profile
                 </a>
                 <a
-                  href="#"
+                  href="/console/settings"
                   className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   <Settings className="mr-3 h-4 w-4" />
                   Settings
                 </a>
                 <hr className="my-1" />
-                <a
-                  href="#"
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   <LogOut className="mr-3 h-4 w-4" />
                   Sign out
-                </a>
+                </button>
               </div>
             )}
           </div>
