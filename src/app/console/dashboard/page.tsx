@@ -3,8 +3,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart3, Users, Shield, Activity } from 'lucide-react'
 import { useBrownout, useMetrics } from '@/hooks/use-brownout'
-import { AIAssistant } from '@/components/console/ai-assistant'
-import { dashboardAgent } from '@/lib/ai-agent'
+import { AIAssistant } from '../../../components/console/ai-assistant'
+import { dashboardAgent } from '../../../lib/ai-agent'
 
 export default function DashboardPage() {
   const { status } = useBrownout()

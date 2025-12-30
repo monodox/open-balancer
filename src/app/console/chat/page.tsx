@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { MessageCircle, Send, Bot, User, Clock, DollarSign, Zap } from 'lucide-react'
-import { mockChatHistory } from '@/lib/mock-data'
-import { AIAssistant } from '@/components/console/ai-assistant'
-import { aiAgent } from '@/lib/ai-agent'
+import { mockChatHistory } from '../../../lib/mock-data'
+import { AIAssistant } from '../../../components/console/ai-assistant'
+import { aiAgent } from '../../../lib/ai-agent'
 
 export default function ChatPage() {
   const [message, setMessage] = useState('')
