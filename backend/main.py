@@ -10,6 +10,7 @@ from datetime import datetime
 
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException, Body
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -146,6 +147,19 @@ app = FastAPI(title="Open-Balancer Backend", lifespan=lifespan)
 
 # Auto-instrument FastAPI
 FastAPIInstrumentor.instrument_app(app)
+
+# --- CORS Middleware ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "https://open-balancer.web.app",
+        "https://open-balancer.firebaseapp.com"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Pydantic Models ---
 

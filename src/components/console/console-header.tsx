@@ -40,10 +40,9 @@ export function ConsoleHeader({ onMenuClick }: ConsoleHeaderProps) {
             <Menu className="h-5 w-5" />
           </Button>
 
-          <div className="flex items-center space-x-2">
-            <Building2 className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold text-gray-900 hidden sm:block">open-Balancer</span>
-            <span className="text-sm text-gray-500 hidden md:block">Console</span>
+
+          <div className="flex items-center space-x-2 lg:hidden">
+            <span className="text-lg font-bold text-gray-900">open-Balancer</span>
           </div>
         </div>
 
