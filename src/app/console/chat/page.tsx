@@ -6,9 +6,25 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { MessageCircle, Send, Bot, User, Clock, DollarSign, Zap } from 'lucide-react'
-import { mockChatHistory } from '../../../lib/mock-data'
-import { AIAssistant } from '../../../components/console/ai-assistant'
-import { aiAgent } from '../../../lib/ai-agent'
+
+// Mock data inline to avoid import issues
+const mockChatHistory = [
+  {
+    id: '1',
+    message: 'Hello! How can I help you test the LLM integration?',
+    sender: 'assistant',
+    timestamp: new Date(Date.now() - 3600000).toISOString(),
+    type: 'greeting',
+    user: 'assistant@open-balancer.com',
+    response: 'Hello! How can I help you test the LLM integration?',
+    model: 'gpt-4',
+    tokensUsed: 45,
+    cost: 0.0012,
+    latency: 850,
+    brownoutMode: 'normal',
+    quality: 0.92
+  }
+]
 
 export default function ChatPage() {
   const [message, setMessage] = useState('')
@@ -243,13 +259,6 @@ export default function ChatPage() {
           </div>
         </div>
       </div>
-
-      <AIAssistant 
-        context="chat"
-        agent={aiAgent}
-        title="LLM Chat Assistant"
-        placeholder="Ask me to help test different queries or explain brownout behavior..."
-      />
     </div>
   )
 }
