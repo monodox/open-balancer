@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Eye, BarChart3, Activity, TrendingUp, Server, Database, Zap, AlertTriangle } from 'lucide-react'
 import { mockObservabilityData } from '@/lib/mock-data'
+import { AIAssistant } from '@/components/console/ai-assistant'
+import { observabilityAgent } from '@/lib/ai-agent'
 
 export default function ObservabilityPage() {
   const [data] = useState(mockObservabilityData)
@@ -233,6 +235,13 @@ export default function ObservabilityPage() {
           </CardContent>
         </Card>
       </div>
+
+      <AIAssistant 
+        context="observability"
+        agent={observabilityAgent}
+        title="Observability Assistant"
+        placeholder="Ask about your monitoring data, traces, logs, or system health..."
+      />
     </div>
   )
 }

@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { BookOpen, MessageCircle, Search, ExternalLink, HelpCircle, Clock, Tag } from 'lucide-react'
 import { mockHelpArticles } from '@/lib/mock-data'
+import { AIAssistant } from '@/components/console/ai-assistant'
+import { helpAgent } from '@/lib/ai-agent'
 
 export default function HelpPage() {
   const [articles] = useState(mockHelpArticles)
@@ -200,6 +202,13 @@ export default function HelpPage() {
           </div>
         </CardContent>
       </Card>
+
+      <AIAssistant 
+        context="help"
+        agent={helpAgent}
+        title="Help Assistant"
+        placeholder="Ask me about setup, configuration, troubleshooting, or best practices..."
+      />
     </div>
   )
 }

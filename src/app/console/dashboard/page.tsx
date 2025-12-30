@@ -3,6 +3,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart3, Users, Shield, Activity } from 'lucide-react'
 import { useBrownout, useMetrics } from '@/hooks/use-brownout'
+import { AIAssistant } from '@/components/console/ai-assistant'
+import { dashboardAgent } from '@/lib/ai-agent'
 
 export default function DashboardPage() {
   const { status } = useBrownout()
@@ -164,6 +166,13 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      <AIAssistant 
+        context="dashboard"
+        agent={dashboardAgent}
+        title="Dashboard AI Assistant"
+        placeholder="Ask about your metrics, brownout status, or system performance..."
+      />
     </div>
   )
 }

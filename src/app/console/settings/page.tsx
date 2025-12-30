@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Settings, User, Shield, Bell, Key, Database, Eye, EyeOff, Copy, Check } from 'lucide-react'
 import { mockSettings, mockUser } from '@/lib/mock-data'
+import { AIAssistant } from '@/components/console/ai-assistant'
+import { aiAgent } from '@/lib/ai-agent'
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState(mockSettings)
@@ -334,6 +336,13 @@ export default function SettingsPage() {
           </Card>
         </div>
       </div>
+
+      <AIAssistant 
+        context="settings"
+        agent={aiAgent}
+        title="Settings Assistant"
+        placeholder="Ask me about configuration, integrations, or account settings..."
+      />
     </div>
   )
 }

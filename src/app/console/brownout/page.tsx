@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { AlertTriangle, Clock, Settings, Activity } from 'lucide-react'
 import { useBrownout } from '@/hooks/use-brownout'
+import { AIAssistant } from '@/components/console/ai-assistant'
+import { brownoutAgent } from '@/lib/ai-agent'
 
 export default function BrownoutPage() {
   const { status, loading, error, setMode } = useBrownout()
@@ -224,6 +226,13 @@ export default function BrownoutPage() {
           </div>
         </CardContent>
       </Card>
+
+      <AIAssistant 
+        context="brownout"
+        agent={brownoutAgent}
+        title="Brownout Strategy Assistant"
+        placeholder="Ask about brownout modes, thresholds, or configuration..."
+      />
     </div>
   )
 }

@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { MessageCircle, Send, Bot, User, Clock, DollarSign, Zap } from 'lucide-react'
 import { mockChatHistory } from '@/lib/mock-data'
+import { AIAssistant } from '@/components/console/ai-assistant'
+import { aiAgent } from '@/lib/ai-agent'
 
 export default function ChatPage() {
   const [message, setMessage] = useState('')
@@ -238,6 +240,13 @@ export default function ChatPage() {
           </div>
         </div>
       </div>
+
+      <AIAssistant 
+        context="chat"
+        agent={aiAgent}
+        title="LLM Chat Assistant"
+        placeholder="Ask me to help test different queries or explain brownout behavior..."
+      />
     </div>
   )
 }

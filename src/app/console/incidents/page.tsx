@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { AlertCircle, Plus, Filter, Clock, CheckCircle, AlertTriangle, XCircle } from 'lucide-react'
 import { mockIncidents } from '@/lib/mock-data'
+import { AIAssistant } from '@/components/console/ai-assistant'
+import { incidentAgent } from '@/lib/ai-agent'
 
 export default function IncidentsPage() {
   const [incidents] = useState(mockIncidents)
@@ -216,6 +218,13 @@ export default function IncidentsPage() {
           </CardContent>
         </Card>
       </div>
+
+      <AIAssistant 
+        context="incidents"
+        agent={incidentAgent}
+        title="Incident Analysis Assistant"
+        placeholder="Ask me to analyze incidents or explain brownout responses..."
+      />
     </div>
   )
 }
