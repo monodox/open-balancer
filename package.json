@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "export": "next build && next export",
     "start": "next start",
     "lint": "next lint",
     "backend": "powershell -ExecutionPolicy Bypass -File scripts/start-backend.ps1",
-    "dev:all": "concurrently \"npm run dev\" \"npm run backend\""
+    "dev:all": "concurrently \"npm run dev\" \"npm run backend\"",
+    "deploy:firebase": "npm run build && firebase deploy"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
