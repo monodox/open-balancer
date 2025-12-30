@@ -66,6 +66,10 @@ graph TB
 2. **Install dependencies**
    ```bash
    npm install
+   
+   # Install backend dependencies
+   pip install -r backend/requirements.txt
+
    ```
 
 3. **Set up environment variables**
@@ -76,6 +80,11 @@ graph TB
 
 4. **Run the development server**
    ```bash
+   # Start external services (if not using cloud)
+   # Start the backend (FastAPI)
+   npm run backend
+   
+   # Start the frontend (Next.js) - in a new terminal
    npm run dev
    ```
 
@@ -262,6 +271,9 @@ npm install @opentelemetry/api @opentelemetry/web @opentelemetry/exporter-otlp-h
 
 ```
 open-balancer/
+├── backend/                  # Python FastAPI Backend
+│   ├── main.py              # Application entry point
+│   └── requirements.txt     # Python dependencies
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── site/              # Marketing website
