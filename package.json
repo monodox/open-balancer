@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "backend": "cd backend && uvicorn main:app --reload",
+    "backend": "powershell -ExecutionPolicy Bypass -File scripts/start-backend.ps1",
     "dev:all": "concurrently \"npm run dev\" \"npm run backend\""
   },
   "dependencies": {

@@ -20,9 +20,12 @@ export default function ChatPage() {
     // Add user message
     const userMessage = {
       id: `chat-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      user: 'test@example.com',
       message: message,
+      sender: 'user',
+      timestamp: new Date().toISOString(),
+      type: 'question',
+      // Additional properties for chat display
+      user: 'test@example.com',
       response: 'This is a demo response. In production, this would connect to your LLM service.',
       model: 'gpt-4',
       tokensUsed: Math.floor(50 + Math.random() * 200),

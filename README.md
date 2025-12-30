@@ -95,7 +95,8 @@ graph TB
 
 ```bash
 # Google Cloud
-GOOGLE_CLOUD_PROJECT=your-project-id
+# Google Cloud
+GOOGLE_CLOUD_PROJECT=open-balancer-sre-demo
 GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account.json
 
 # Gemini API

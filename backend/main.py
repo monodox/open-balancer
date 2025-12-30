@@ -1,4 +1,5 @@
 
+
 import os
 import time
 import logging
@@ -12,6 +13,10 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 import google.generativeai as genai
 from dotenv import load_dotenv
+
+# Vertex AI imports
+import vertexai
+from vertexai.preview.generative_models import GenerativeModel as VertexGenerativeModel
 
 # OpenTelemetry imports
 from opentelemetry import trace, metrics
@@ -40,11 +45,20 @@ OTEL_SERVICE_NAME = os.getenv("OTEL_SERVICE_NAME", "open-balancer-backend")
 OTEL_EXPORTER_OTLP_ENDPOINT = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "https://otlp.datadoghq.com")
 OTEL_EXPORTER_OTLP_HEADERS = os.getenv("OTEL_EXPORTER_OTLP_HEADERS", "")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")
+GOOGLE_CLOUD_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
 
-if not GEMINI_API_KEY:
-    logger.warning("GEMINI_API_KEY is not set. LLM calls will fail.")
-else:
+USE_VERTEX = False
+
+if GEMINI_API_KEY:
+    logger.info("Using Google AI Studio (API Key)")
     genai.configure(api_key=GEMINI_API_KEY)
+elif GOOGLE_CLOUD_PROJECT:
+    logger.info(f"Using Google Vertex AI (Project: {GOOGLE_CLOUD_PROJECT})")
+    vertexai.init(project=GOOGLE_CLOUD_PROJECT, location=GOOGLE_CLOUD_LOCATION)
+    USE_VERTEX = True
+else:
+    logger.warning("No GEMINI_API_KEY or GOOGLE_CLOUD_PROJECT set. LLM calls will fail.")
 
 # --- Brownout Models & State ---
 
@@ -189,23 +203,40 @@ async def generate_gemini_content(message: str, context: str, api_key: Optional[
     elif mode == BrownoutMode.EMERGENCY:
         generation_config = {"temperature": 0.1, "max_output_tokens": 50}
 
-    # Use provided key or env key
+    # Use provided key or fallback
     active_key = api_key if api_key else GEMINI_API_KEY
-    if not active_key:
-        raise HTTPException(status_code=400, detail="API Key required")
+    
+    # Validation
+    if not active_key and not USE_VERTEX:
+        raise HTTPException(status_code=400, detail="API Key required or GCP Auth failed")
         
     try:
-        genai.configure(api_key=active_key)
-        model = genai.GenerativeModel("gemini-pro")
-        response = model.generate_content(
-            full_prompt,
-            generation_config=generation_config
-        )
+        text = ""
+        tokens = 0
         
-        text = response.text
-        tokens = len(text) // 4 # Rough estimate
+        if USE_VERTEX and not active_key:
+             # Use Vertex AI
+             model = VertexGenerativeModel("gemini-pro")
+             response = await model.generate_content_async(
+                 full_prompt,
+                 generation_config=generation_config
+             )
+             text = response.text
+             # Vertex approximation
+             tokens = len(text) // 4
+             
+        else:
+             # Use AI Studio
+             genai.configure(api_key=active_key)
+             model = genai.GenerativeModel("gemini-pro")
+             response = model.generate_content(
+                full_prompt,
+                generation_config=generation_config
+             )
+             text = response.text
+             tokens = len(text) // 4
+        
         cost = calculate_cost(tokens)
-        
         return text, tokens, cost
 
     except Exception as e:
