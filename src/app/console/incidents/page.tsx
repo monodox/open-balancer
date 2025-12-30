@@ -1,8 +1,51 @@
+'use client'
+
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { AlertCircle, Plus, Filter } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { AlertCircle, Plus, Filter, Clock, CheckCircle, AlertTriangle, XCircle } from 'lucide-react'
+import { mockIncidents } from '@/lib/mock-data'
 
 export default function IncidentsPage() {
+  const [incidents] = useState(mockIncidents)
+  const [filter, setFilter] = useState('all')
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'resolved': return <CheckCircle className="h-4 w-4 text-green-500" />
+      case 'investigating': return <Clock className="h-4 w-4 text-yellow-500" />
+      case 'critical': return <XCircle className="h-4 w-4 text-red-500" />
+      default: return <AlertCircle className="h-4 w-4 text-gray-500" />
+    }
+  }
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'critical': return 'bg-red-100 text-red-800'
+      case 'high': return 'bg-orange-100 text-orange-800'
+      case 'medium': return 'bg-yellow-100 text-yellow-800'
+      case 'low': return 'bg-green-100 text-green-800'
+      default: return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  const getBrownoutColor = (mode: string) => {
+    switch (mode) {
+      case 'normal': return 'bg-green-100 text-green-800'
+      case 'soft': return 'bg-yellow-100 text-yellow-800'
+      case 'hard': return 'bg-orange-100 text-orange-800'
+      case 'emergency': return 'bg-red-100 text-red-800'
+      default: return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  const openIncidents = incidents.filter(i => i.status !== 'resolved').length
+  const inProgress = incidents.filter(i => i.status === 'investigating').length
+  const resolvedToday = incidents.filter(i => {
+    const today = new Date().toDateString()
+    return i.resolvedAt && new Date(i.resolvedAt).toDateString() === today
+  }).length
   return (
     <div className="p-6">
       <div className="mb-8 flex items-center justify-between">
@@ -31,41 +74,49 @@ export default function IncidentsPage() {
             <AlertCircle className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">No open incidents</p>
+            <div className="text-2xl font-bold">{openIncidents}</div>
+            <p className="text-xs text-muted-foreground">
+              {openIncidents === 0 ? 'No open incidents' : 'Require attention'}
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-            <AlertCircle className="h-4 w-4 text-yellow-500" />
+            <Clock className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">No incidents in progress</p>
+            <div className="text-2xl font-bold">{inProgress}</div>
+            <p className="text-xs text-muted-foreground">
+              {inProgress === 0 ? 'No incidents in progress' : 'Being investigated'}
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Resolved Today</CardTitle>
-            <AlertCircle className="h-4 w-4 text-green-500" />
+            <CheckCircle className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">No incidents resolved today</p>
+            <div className="text-2xl font-bold">{resolvedToday}</div>
+            <p className="text-xs text-muted-foreground">
+              {resolvedToday === 0 ? 'No incidents resolved today' : 'Successfully resolved'}
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total This Month</CardTitle>
-            <AlertCircle className="h-4 w-4 text-blue-500" />
+            <AlertTriangle className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">No incidents this month</p>
+            <div className="text-2xl font-bold">{incidents.length}</div>
+            <p className="text-xs text-muted-foreground">
+              {incidents.length === 0 ? 'No incidents this month' : 'Total incidents'}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -73,18 +124,58 @@ export default function IncidentsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Recent Incidents</CardTitle>
-          <CardDescription>Latest security incidents and system issues</CardDescription>
+          <CardDescription>Latest brownout-related incidents and system issues</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-12 text-gray-500">
-            <AlertCircle className="mx-auto h-12 w-12 mb-4 text-gray-400" />
-            <p className="text-lg font-medium mb-2">No incidents reported</p>
-            <p className="text-sm mb-4">When incidents occur, they will be displayed here</p>
-            <Button variant="outline">
-              <Plus className="mr-2 h-4 w-4" />
-              Create Test Incident
-            </Button>
-          </div>
+          {incidents.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <AlertCircle className="mx-auto h-12 w-12 mb-4 text-gray-400" />
+              <p className="text-lg font-medium mb-2">No incidents reported</p>
+              <p className="text-sm mb-4">When incidents occur, they will be displayed here</p>
+              <Button variant="outline">
+                <Plus className="mr-2 h-4 w-4" />
+                Create Test Incident
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {incidents.map((incident) => (
+                <div key={incident.id} className="border rounded-lg p-4 hover:bg-gray-50">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        {getStatusIcon(incident.status)}
+                        <h3 className="font-medium text-gray-900">{incident.title}</h3>
+                        <Badge className={getSeverityColor(incident.severity)}>
+                          {incident.severity}
+                        </Badge>
+                        <Badge className={getBrownoutColor(incident.brownoutMode)}>
+                          {incident.brownoutMode} mode
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">{incident.description}</p>
+                      <div className="flex items-center space-x-4 text-xs text-gray-500">
+                        <span>ID: {incident.id}</span>
+                        <span>Created: {new Date(incident.createdAt).toLocaleString()}</span>
+                        {incident.resolvedAt && (
+                          <span>Resolved: {new Date(incident.resolvedAt).toLocaleString()}</span>
+                        )}
+                        <span>Services: {incident.affectedServices.join(', ')}</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge variant="outline" className="mb-2">
+                        {incident.status}
+                      </Badge>
+                      <div className="text-xs text-gray-500">
+                        {incident.metrics.duration}min duration
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
