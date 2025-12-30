@@ -25,6 +25,76 @@ const mockIncidents = [
       revenue_impact: '$2,400',
       duration_minutes: 75
     }
+  },
+  {
+    id: 'INC-2024-002',
+    title: 'Token Cost Budget Exceeded',
+    description: 'Hourly token costs exceeded budget thresholds',
+    status: 'investigating',
+    severity: 'medium',
+    priority: 'P2',
+    created_at: '2024-01-16T09:15:00Z',
+    updated_at: '2024-01-16T10:30:00Z',
+    assignee: 'Cost Optimization Team',
+    tags: ['cost', 'budget', 'tokens'],
+    impact: {
+      affected_users: 800,
+      revenue_impact: '$1,200',
+      duration_minutes: 45
+    }
+  },
+  {
+    id: 'INC-2024-003',
+    title: 'Elevated Error Rate',
+    description: 'Increased 5xx errors from LLM API calls',
+    status: 'monitoring',
+    severity: 'low',
+    priority: 'P3',
+    created_at: '2024-01-16T16:20:00Z',
+    updated_at: '2024-01-16T16:45:00Z',
+    assignee: 'Platform Team',
+    tags: ['errors', 'api', 'monitoring'],
+    impact: {
+      affected_users: 300,
+      revenue_impact: '$400',
+      duration_minutes: 25
+    }
+  },
+  {
+    id: 'INC-2024-004',
+    title: 'Database Connection Pool Exhaustion',
+    description: 'Connection pool reached maximum capacity causing timeouts',
+    status: 'resolved',
+    severity: 'critical',
+    priority: 'P0',
+    created_at: '2024-01-14T11:20:00Z',
+    updated_at: '2024-01-14T12:15:00Z',
+    resolved_at: '2024-01-14T12:15:00Z',
+    assignee: 'Database Team',
+    tags: ['database', 'connections', 'timeout'],
+    impact: {
+      affected_users: 2500,
+      revenue_impact: '$5,200',
+      duration_minutes: 55
+    }
+  },
+  {
+    id: 'INC-2024-005',
+    title: 'Gemini API Rate Limiting',
+    description: 'Hitting rate limits on Gemini API causing request failures',
+    status: 'resolved',
+    severity: 'medium',
+    priority: 'P2',
+    created_at: '2024-01-13T08:45:00Z',
+    updated_at: '2024-01-13T09:30:00Z',
+    resolved_at: '2024-01-13T09:30:00Z',
+    assignee: 'API Integration Team',
+    tags: ['api', 'rate-limit', 'gemini'],
+    impact: {
+      affected_users: 650,
+      revenue_impact: '$890',
+      duration_minutes: 45
+    }
   }
 ]
 
