@@ -1,0 +1,125 @@
+# OpenTelemetry Collector Configuration for open-Balancer
+# This configuration sets up the collector to receive telemetry data
+# and export it to Datadog for comprehensive observability
+
+receivers:
+  # OTLP receiver for application telemetry
+  otlp:
+    protocols:
+      http:
+        endpoint: "localhost:4318"
+      grpc:
+        endpoint: "localhost:4317"
+  
+  # Host metrics receiver for infrastructure monitoring
+  # Required for correct infrastructure metrics in Datadog
+  hostmetrics:
+    collection_interval: 10s
+    scrapers:
+      paging:
+        metrics:
+          system.paging.utilization:
+            enabled: true
+      cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
+      disk:
+      filesystem:
+        metrics:
+          system.filesystem.utilization:
+            enabled: true
+      load:
+      memory:
+      network:
+      processes:
+
+exporters:
+  # Datadog exporter configuration
+  # Use environment variables for security
+  datadog/exporter:
+    api:
+      site: "${DD_SITE}"
+      key: "${DD_API_KEY}"
+    
+    # Optional: Configure hostname and tags
+    hostname: "${HOSTNAME}"
+    tags:
+      - "service:open-balancer"
+      - "env:${ENVIRONMENT:-production}"
+      - "version:${VERSION:-1.0.0}"
+
+connectors:
+  # Datadog connector for enhanced trace processing
+  datadog/connector:
+
+processors:
+  # Batch processor - required for non-development environments
+  # Optimizes performance by batching telemetry data
+  batch:
+    send_batch_max_size: 100
+    send_batch_size: 10
+    timeout: 10s
+  
+  # Resource processor to add consistent resource attributes
+  resource:
+    attributes:
+      - key: service.name
+        value: "open-balancer"
+        action: upsert
+      - key: service.version
+        value: "${VERSION:-1.0.0}"
+        action: upsert
+      - key: deployment.environment
+        value: "${ENVIRONMENT:-production}"
+        action: upsert
+
+  # Memory limiter to prevent OOM issues
+  memory_limiter:
+    limit_mib: 512
+    spike_limit_mib: 128
+    check_interval: 5s
+
+service:
+  # Configure telemetry for the collector itself
+  telemetry:
+    logs:
+      level: "info"
+    metrics:
+      address: "localhost:8888"
+  
+  # Define processing pipelines
+  pipelines:
+    # Metrics pipeline
+    metrics:
+      receivers: [datadog/connector, otlp, hostmetrics]
+      processors: [memory_limiter, resource, batch]
+      exporters: [datadog/exporter]
+    
+    # Traces pipeline
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [datadog/connector, datadog/exporter]
+    
+    # Logs pipeline
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [datadog/exporter]
+
+  # Extensions for health checks and monitoring
+  extensions: [health_check, pprof, zpages]
+
+extensions:
+  # Health check extension
+  health_check:
+    endpoint: "localhost:13133"
+  
+  # Performance profiling
+  pprof:
+    endpoint: "localhost:1777"
+  
+  # zPages for debugging
+  zpages:
+    endpoint: "localhost:55679"

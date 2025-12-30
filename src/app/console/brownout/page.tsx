@@ -4,8 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { AlertTriangle, Clock, Settings, Activity } from 'lucide-react'
 import { useBrownout } from '@/hooks/use-brownout'
-import { AIAssistant } from '@/components/console/ai-assistant'
-import { brownoutAgent } from '@/lib/ai-agent'
 
 export default function BrownoutPage() {
   const { status, loading, error, setMode } = useBrownout()
@@ -203,7 +201,7 @@ export default function BrownoutPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm font-medium">Features:</span>
-                  <span className="text-sm">{status.llm_config.features.length} enabled</span>
+                  <span className="text-sm">{status.llm_config.features?.length || 0} enabled</span>
                 </div>
               </div>
             ) : (
@@ -226,13 +224,6 @@ export default function BrownoutPage() {
           </div>
         </CardContent>
       </Card>
-
-      <AIAssistant 
-        context="brownout"
-        agent={brownoutAgent}
-        title="Brownout Strategy Assistant"
-        placeholder="Ask about brownout modes, thresholds, or configuration..."
-      />
     </div>
   )
 }

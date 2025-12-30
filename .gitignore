@@ -1,20 +1,9 @@
-# =============================================================================
-# DEPENDENCIES
-# =============================================================================
-
-# Node.js dependencies
+# Dependencies
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
-
-# Python dependencies
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
 build/
 develop-eggs/
@@ -28,71 +17,16 @@ parts/
 sdist/
 var/
 wheels/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
-
-# Virtual environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-pipenv/
-.pipenv/
-
-# Poetry
-poetry.lock
-
-# Conda
-.conda/
-
-# =============================================================================
-# BUILD OUTPUTS
-# =============================================================================
 
 # Next.js
-/.next/
-/out/
-next-env.d.ts
+.next/
+out/
 
-# React
-/build
-/dist
-
-# Nuxt.js
-.nuxt
-dist
-
-# Gatsby
-.cache/
-public
-
-# Vuepress
-.vuepress/dist
-
-# Serverless
-.serverless/
-
-# FuseBox
-.fusebox/
-
-# DynamoDB Local
-.dynamodb/
-
-# TernJS
-.tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# =============================================================================
-# ENVIRONMENT & CONFIGURATION
-# =============================================================================
+# Production
+build
 
 # Environment variables
 .env
@@ -100,46 +34,14 @@ public
 .env.development.local
 .env.test.local
 .env.production.local
-.env.*.local
-
-# Configuration files with secrets
-config/local.json
-config/production.json
-config/development.json
-config/secrets.json
-config/*-secrets.*
-*.config.local.js
-*.config.secret.js
-secret-config.*
-
-# Google Cloud credentials
-service-account*.json
-gcp-key*.json
-*.pem
-*.key
-*.crt
-*.p12
-*.pfx
-
-# AWS credentials
-.aws/
-
-# Docker secrets
-docker-compose.override.yml
-.dockerignore.local
-
-# =============================================================================
-# LOGS & RUNTIME DATA
-# =============================================================================
+.env.production
 
 # Logs
-logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-.pnpm-debug.log*
+*.log
 
 # Runtime data
 pids
@@ -154,35 +56,15 @@ coverage/
 # nyc test coverage
 .nyc_output
 
-# Grunt intermediate storage
-.grunt
-
-# Bower dependency directory
-bower_components
-
-# node-waf configuration
-.lock-wscript
-
-# Compiled binary addons
-build/Release
-
 # Dependency directories
+node_modules/
 jspm_packages/
-
-# Snowpack dependency directory
-web_modules/
-
-# TypeScript cache
-*.tsbuildinfo
 
 # Optional npm cache directory
 .npm
 
 # Optional eslint cache
 .eslintcache
-
-# Optional stylelint cache
-.stylelintcache
 
 # Microbundle cache
 .rpt2_cache/
@@ -199,336 +81,132 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
-# parcel-bundler cache
+# parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
 
-# =============================================================================
-# IDE & EDITOR FILES
-# =============================================================================
+# Next.js build output
+.next
+out
 
-# Visual Studio Code
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# Editor directories and files
 .vscode/
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
-
-# Local History for Visual Studio Code
-.history/
-
-# Built Visual Studio Code Extensions
-*.vsix
-
-# JetBrains IDEs
 .idea/
-*.iws
-*.iml
-*.ipr
-
-# Sublime Text
-*.sublime-workspace
-*.sublime-project
-
-# Vim
 *.swp
 *.swo
 *~
 
-# Emacs
-*~
-\#*\#
-/.emacs.desktop
-/.emacs.desktop.lock
-*.elc
-auto-save-list
-tramp
-.\#*
-
-# =============================================================================
-# OPERATING SYSTEM FILES
-# =============================================================================
-
-# macOS
+# OS generated files
 .DS_Store
-.AppleDouble
-.LSOverride
-Icon
+.DS_Store?
 ._*
-.DocumentRevisions-V100
-.fseventsd
 .Spotlight-V100
-.TemporaryItems
 .Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-# Windows
-Thumbs.db
-Thumbs.db:encryptable
 ehthumbs.db
-ehthumbs_vista.db
-*.stackdump
-[Dd]esktop.ini
-$RECYCLE.BIN/
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-*.lnk
+Thumbs.db
 
-# Linux
-*~
-.fuse_hidden*
-.directory
-.Trash-*
-.nfs*
+# Security & Secrets
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+service-account.json
+service-account-*.json
+credentials.json
+secrets/
+.secrets/
 
-# =============================================================================
-# DATADOG & MONITORING
-# =============================================================================
+# API Keys and tokens
+.env.keys
+*.env.backup
 
-# Datadog agent installer
-datadog-agent.msi
-datadog-agent*.exe
-dd-agent*.msi
-
-# Datadog configuration (may contain API keys)
-datadog.yaml
-dd-agent.conf
-datadog-config*.yaml
-dd-config*.json
-
-# OpenTelemetry
-otel-collector-config*.yaml
-
-# Monitoring data
-*.trace
-*.prof
-*.pprof
-
-# =============================================================================
-# CLOUD & DEPLOYMENT
-# =============================================================================
-
-# Terraform
-*.tfstate
-*.tfstate.*
-.terraform/
-.terraform.lock.hcl
-terraform.tfvars
-terraform.tfvars.json
-*.auto.tfvars
-*.auto.tfvars.json
-crash.log
-crash.*.log
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-.terraformrc
-terraform.rc
-
-# Kubernetes
-*.kubeconfig
-kubeconfig
-.kube/config
-
-# Docker
-.dockerignore.local
-docker-compose.override.yml
-docker-compose.*.yml
-!docker-compose.example.yml
-
-# Helm
-*.tgz
-charts/*.tgz
-
-# =============================================================================
-# DATABASES
-# =============================================================================
-
-# SQLite
+# Database
 *.db
 *.sqlite
 *.sqlite3
-*.db-journal
 
-# PostgreSQL
-*.dump
-*.sql
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+firebase-debug.*.log
 
-# MongoDB
-*.bson
+# Google Cloud
+.gcloud/
+gcloud-service-key.json
 
-# Redis
-dump.rdb
+# Datadog
+datadog-install.log
 
-# =============================================================================
-# TESTING
-# =============================================================================
+# Testing
+.coverage
+.pytest_cache/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
 
-# Test results
-/coverage/
-/.nyc_output
-junit.xml
-test-results.xml
-*.lcov
+# Jupyter Notebook
+.ipynb_checkpoints
 
-# Jest
-/coverage/
+# IPython
+profile_default/
+ipython_config.py
 
-# Cypress
-cypress/videos/
-cypress/screenshots/
-cypress/downloads/
+# Environments
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-# Playwright
-test-results/
-playwright-report/
-playwright/.cache/
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
 
-# =============================================================================
-# SECURITY & SECRETS - CRITICAL FOR PUBLIC REPO
-# =============================================================================
+# Pyre type checker
+.pyre/
 
-# ALL API keys and secrets - NEVER COMMIT THESE
-*.key
-*.pem
-*.p12
-*.pfx
-*.crt
-*.cer
-*.der
-secrets.json
-api-keys.json
-keys.json
-credentials.json
-.credentials
-
-# Environment files with secrets
-.env*
-!.env.example
-!.env.template
-
-# Cloud provider credentials
-service-account*.json
-gcp-*.json
-aws-credentials*
-azure-credentials*
-
-# SSH keys
-id_rsa
-id_dsa
-id_ecdsa
-id_ed25519
-*.pub
-.ssh/
-
-# GPG keys
-*.gpg
-*.asc
-
-# Database connection strings
-database.url
-db-config.json
-
-# Third-party service keys
-datadog-api-key*
-gemini-api-key*
-openai-api-key*
-slack-webhook*
-
-# Certificates and tokens
-*.token
-*.jwt
-auth-token*
-access-token*
-refresh-token*
-
-# =============================================================================
-# TEMPORARY & CACHE FILES
-# =============================================================================
-
-# Temporary files
-*.tmp
-*.temp
-*.swp
-*.swo
+# Backup files
 *.bak
 *.backup
+*.old
 *.orig
+*.tmp
 
-# Cache directories
-.cache/
-.npm/
-.yarn/
-.pnpm/
-
-# =============================================================================
-# MISCELLANEOUS
-# =============================================================================
-
-# Archives
+# Compressed files
 *.zip
 *.tar.gz
 *.rar
-*.7z
 
-# Large media files
-*.mp4
-*.avi
-*.mov
-*.wmv
-*.flv
-*.webm
-*.mp3
-*.wav
-*.flac
-*.aac
-*.ogg
-*.wma
+# Local development
+.local/
+local/
 
-# Design files
-*.psd
-*.ai
-*.sketch
-*.fig
-*.xd
+# Monitoring and observability
+*.trace
+*.prof
 
-# Documentation builds
-_site/
-.jekyll-cache/
-.jekyll-metadata
-
-# Storybook
-storybook-static/
-
-# =============================================================================
-# PROJECT SPECIFIC
-# =============================================================================
-
-# open-Balancer specific
-/console/build/
-/backend/__pycache__/
-/backend/.pytest_cache/
-/backend/logs/
-/monitoring/grafana/data/
-/monitoring/prometheus/data/
-
-# Local development - NO SECRETS
-local-config.json
-dev-secrets.env
-test-data/
-*.local.*
-*.secret.*
-*.private.*
-local-secrets.*
-dev-keys.*
+# Package manager lock files (keep package-lock.json for consistency)
+yarn.lock
+pnpm-lock.yaml
