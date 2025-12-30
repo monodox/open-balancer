@@ -4,12 +4,12 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { logout, getUserEmail } from '@/lib/auth'
-import { 
-  Bell, 
-  Search, 
-  User, 
-  Settings, 
-  LogOut, 
+import {
+  Bell,
+  Search,
+  User,
+  Settings,
+  LogOut,
   Menu,
   Building2
 } from 'lucide-react'
@@ -27,7 +27,7 @@ export function ConsoleHeader({ onMenuClick }: ConsoleHeaderProps) {
   }
 
   return (
-    <header className="bg-white border-b border-gray-200 px-4 py-3">
+    <header className="sticky top-0 z-40 bg-white border-b border-gray-200 px-4 py-3">
       <div className="flex items-center justify-between">
         {/* Left side - Menu button and Logo */}
         <div className="flex items-center space-x-4">
@@ -39,7 +39,7 @@ export function ConsoleHeader({ onMenuClick }: ConsoleHeaderProps) {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          
+
           <div className="flex items-center space-x-2">
             <Building2 className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold text-gray-900 hidden sm:block">open-Balancer</span>

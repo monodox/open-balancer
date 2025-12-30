@@ -59,7 +59,7 @@ graph TB
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/open-balancer.git
+   git clone https://github.com/monodox/open-balancer.git
    cd open-balancer
    ```
 
@@ -78,40 +78,8 @@ graph TB
    # Edit .env.local with your configuration
    ```
 
-4. **Run the development server**
-   ```bash
-   # Start external services (if not using cloud)
-   # Start the backend (FastAPI)
-   npm run backend
-   
-   # Start the frontend (Next.js) - in a new terminal
-   npm run dev
-   ```
-
-5. **Open the console**
-   Navigate to [http://localhost:3000/console/dashboard](http://localhost:3000/console/dashboard)
-
-### Environment Configuration
-
-```bash
-# Google Cloud
-# Google Cloud
-GOOGLE_CLOUD_PROJECT=open-balancer-sre-demo
-GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account.json
-
-# Gemini API
-GEMINI_API_KEY=your-gemini-api-key
-
-# Datadog
-DATADOG_API_KEY=your-datadog-api-key
-DATADOG_APP_KEY=your-datadog-app-key
-DATADOG_SITE=datadoghq.com
-
-# OpenTelemetry (Production-Grade Observability)
-OTEL_SERVICE_NAME=open-balancer-backend
-OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.datadoghq.com
-OTEL_EXPORTER_OTLP_HEADERS="dd-api-key=your-datadog-api-key"
-```
+4. **View the live demo**
+   Visit [https://open-balancer.web.app](https://open-balancer.web.app)
 
 ## 🔍 OpenTelemetry Integration (Recommended)
 
