@@ -1,0 +1,294 @@
+# Kubernetes deployment for OpenTelemetry Collector with Datadog
+# This deploys the collector as a sidecar or standalone service in Kubernetes
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+  namespace: open-balancer
+  labels:
+    app: open-balancer
+    component: otel-collector
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          http:
+            endpoint: "0.0.0.0:4318"
+          grpc:
+            endpoint: "0.0.0.0:4317"
+      hostmetrics:
+        collection_interval: 10s
+        scrapers:
+          paging:
+            metrics:
+              system.paging.utilization:
+                enabled: true
+          cpu:
+            metrics:
+              system.cpu.utilization:
+                enabled: true
+          disk:
+          filesystem:
+            metrics:
+              system.filesystem.utilization:
+                enabled: true
+          load:
+          memory:
+          network:
+          processes:
+
+    exporters:
+      datadog/exporter:
+        api:
+          site: "${DD_SITE}"
+          key: "${DD_API_KEY}"
+        hostname: "${HOSTNAME}"
+        tags:
+          - "service:open-balancer"
+          - "env:${ENVIRONMENT}"
+          - "version:${VERSION}"
+          - "cluster:${CLUSTER_NAME}"
+
+    connectors:
+      datadog/connector:
+
+    processors:
+      batch:
+        send_batch_max_size: 100
+        send_batch_size: 10
+        timeout: 10s
+      resource:
+        attributes:
+          - key: service.name
+            value: "open-balancer"
+            action: upsert
+          - key: service.version
+            value: "${VERSION}"
+            action: upsert
+          - key: deployment.environment
+            value: "${ENVIRONMENT}"
+            action: upsert
+          - key: k8s.cluster.name
+            value: "${CLUSTER_NAME}"
+            action: upsert
+          - key: k8s.namespace.name
+            value: "${NAMESPACE}"
+            action: upsert
+      memory_limiter:
+        limit_mib: 512
+        spike_limit_mib: 128
+        check_interval: 5s
+
+    service:
+      telemetry:
+        logs:
+          level: "info"
+        metrics:
+          address: "0.0.0.0:8888"
+      pipelines:
+        metrics:
+          receivers: [datadog/connector, otlp, hostmetrics]
+          processors: [memory_limiter, resource, batch]
+          exporters: [datadog/exporter]
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, resource, batch]
+          exporters: [datadog/connector, datadog/exporter]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, resource, batch]
+          exporters: [datadog/exporter]
+      extensions: [health_check, pprof]
+
+    extensions:
+      health_check:
+        endpoint: "0.0.0.0:13133"
+      pprof:
+        endpoint: "0.0.0.0:1777"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector
+  namespace: open-balancer
+  labels:
+    app: open-balancer
+    component: otel-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: open-balancer
+      component: otel-collector
+  template:
+    metadata:
+      labels:
+        app: open-balancer
+        component: otel-collector
+    spec:
+      containers:
+      - name: otel-collector
+        image: otel/opentelemetry-collector-contrib:0.91.0
+        command:
+          - "/otelcol-contrib"
+          - "--config=/etc/otel-collector-config/config.yaml"
+        ports:
+        - name: otlp-grpc
+          containerPort: 4317
+          protocol: TCP
+        - name: otlp-http
+          containerPort: 4318
+          protocol: TCP
+        - name: health-check
+          containerPort: 13133
+          protocol: TCP
+        - name: metrics
+          containerPort: 8888
+          protocol: TCP
+        - name: pprof
+          containerPort: 1777
+          protocol: TCP
+        env:
+        - name: DD_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: datadog-secret
+              key: api-key
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: ENVIRONMENT
+          value: "production"
+        - name: VERSION
+          value: "1.0.0"
+        - name: CLUSTER_NAME
+          value: "open-balancer-cluster"
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/otel-collector-config
+        livenessProbe:
+          httpGet:
+            path: /
+            port: health-check
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: health-check
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes:
+      - name: config-volume
+        configMap:
+          name: otel-collector-config
+      serviceAccountName: otel-collector
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector
+  namespace: open-balancer
+  labels:
+    app: open-balancer
+    component: otel-collector
+spec:
+  type: ClusterIP
+  ports:
+  - name: otlp-grpc
+    port: 4317
+    targetPort: otlp-grpc
+    protocol: TCP
+  - name: otlp-http
+    port: 4318
+    targetPort: otlp-http
+    protocol: TCP
+  - name: health-check
+    port: 13133
+    targetPort: health-check
+    protocol: TCP
+  - name: metrics
+    port: 8888
+    targetPort: metrics
+    protocol: TCP
+  selector:
+    app: open-balancer
+    component: otel-collector
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otel-collector
+  namespace: open-balancer
+  labels:
+    app: open-balancer
+    component: otel-collector
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-collector
+  labels:
+    app: open-balancer
+    component: otel-collector
+rules:
+- apiGroups: [""]
+  resources: ["nodes", "nodes/metrics", "services", "endpoints", "pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: otel-collector
+  labels:
+    app: open-balancer
+    component: otel-collector
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: otel-collector
+subjects:
+- kind: ServiceAccount
+  name: otel-collector
+  namespace: open-balancer
+
+---
+# Secret for Datadog API key (create this manually)
+# kubectl create secret generic datadog-secret --from-literal=api-key=YOUR_DD_API_KEY -n open-balancer
+apiVersion: v1
+kind: Secret
+metadata:
+  name: datadog-secret
+  namespace: open-balancer
+  labels:
+    app: open-balancer
+    component: otel-collector
+type: Opaque
+data:
+  # Base64 encoded Datadog API key
+  # Replace with: echo -n "your_dd_api_key" | base64
+  api-key: WU9VUl9ERF9BUElfS0VZ  # This is a placeholder - replace with actual base64 encoded key
